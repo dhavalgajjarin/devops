@@ -1,0 +1,7 @@
+$ mkdir web
+$ docker run -p 80:80 -dit -v "$(pwd)"/web:/var/www/html test:v2
+43adb6d8155b8a40396fbcc07865d2f4570bf04f2f37f8a0b64129b71d919014
+$ docker inspect 43ad
+$ cp index.html web/
+$ wget http://localhost
+$ cat index.html

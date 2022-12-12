@@ -1,0 +1,66 @@
+Master
+$ wget https://apt.puppet.com/puppet7-release-focal.deb
+$ sudo dpkg -i puppet7-release-focal.deb
+$ sudo apt-get update
+$ sudo apt-get install puppetserver
+$ sudo systemctl start puppetserver
+$ puppetserver ca sign --certname slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Successfully signed certificate request for slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+$ puppetserver ca sign --certname slave2.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Successfully signed certificate request for slave2.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+
+
+site.pp
+node default {
+  package{ 'apache2' :
+    ensure => installed,
+  }
+}
+
+Slave1
+$ wget https://apt.puppet.com/puppet7-release-focal.deb
+$ sudo dpkg -i puppet7-release-focal.deb
+$ sudo apt-get update
+$ sudo apt-get install puppet-agent
+$ sudo puppet config set server puppetserver --section main
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669123368'
+Notice: /Stage[main]/Main/Node[default]/Package[apache2]/ensure: created
+Notice: Applied catalog in 10.90 seconds
+
+
+Slave2
+$ wget https://apt.puppet.com/puppet7-release-focal.deb
+$ sudo dpkg -i puppet7-release-focal.deb
+$ sudo apt-get update
+$ sudo apt-get install puppet-agent
+$ sudo puppet config set server puppetserver --section main
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave2.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669123386'
+Notice: /Stage[main]/Main/Node[default]/Package[apache2]/ensure: created
+Notice: Applied catalog in 11.14 seconds
+
+
+Slave3
+$ wget https://apt.puppet.com/puppet7-release-focal.deb
+$ sudo dpkg -i puppet7-release-focal.deb
+$ sudo apt-get update
+$ sudo apt-get install puppet-agent
+$ sudo puppet config set server puppetserver --section main
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave3.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669123386'
+Notice: /Stage[main]/Main/Node[default]/Package[apache2]/ensure: created
+Notice: Applied catalog in 11.02 seconds
+

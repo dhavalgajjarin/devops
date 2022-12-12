@@ -1,0 +1,76 @@
+Master
+$ cd /etc/puppetlabs/code/environments/production
+$ mkdir -p assignment51/manifests
+
+init.pp
+class assignment51 {
+  file{ '/tmp/software.txt' :
+    content => 'this is slave1',
+    mode => '0644',
+  }
+}
+
+$ mkdir -p assignment52/manifests
+
+init.pp
+class assignment52 {
+  file{ '/tmp/software.txt' :
+    content => 'this is slave2',
+    mode => '0644',
+  }
+}
+
+$ mkdir -p assignment53/manifests
+
+init.pp
+class assignment53 {
+  file{ '/tmp/software.txt' :
+    content => 'this is slave3',
+    mode => '0644',
+  }
+}
+
+site.pp
+node 'slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net' {
+  include assignment51
+}
+
+node 'slave2.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net' {
+  include assignment52
+}
+
+node 'slave3.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net' {
+  include assignment53
+}
+
+
+
+Slave1
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669138954'
+Notice: /Stage[main]/Assignment51/File[/tmp/software.txt]/ensure: defined content as '{sha256}4bc59b412e7193924d83aea9cfc71bf6ec7153f388828546dfc645f75c0d09c7'
+Notice: Applied catalog in 0.03 seconds
+
+Slave2
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave2.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669138965'
+Notice: /Stage[main]/Assignment52/File[/tmp/software.txt]/ensure: defined content as '{sha256}cbf431de9b93caed4c7d1a034a6c4dacc9b669b7f4977283cca59fe39a5a0cbf'
+Notice: Applied catalog in 0.03 seconds
+
+Slave3
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave3.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669138976'
+Notice: /Stage[main]/Assignment53/File[/tmp/software.txt]/ensure: defined content as '{sha256}65e15312f02e0c37ad794e357f3658b3f0a196572f63dbf5cc2fb42d6b212a49'
+Notice: Applied catalog in 0.03 seconds

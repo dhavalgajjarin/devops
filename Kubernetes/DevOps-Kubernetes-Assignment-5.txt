@@ -1,0 +1,117 @@
+apache.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache
+  labels:
+    app: apache
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache
+        image: httpd
+        ports:
+        - containerPort: 80
+
+$ kubectl create -f apache.yaml
+deployment.apps/apache created
+
+$ kubectl get pods
+NAME                      READY   STATUS    RESTARTS   AGE
+apache-686c588f98-6mgdv   1/1     Running   0          11s
+apache-686c588f98-dxb9d   1/1     Running   0          11s
+apache-686c588f98-j2ts4   1/1     Running   0          11s
+apache-686c588f98-khf7h   1/1     Running   0          11s
+apache-686c588f98-lm4dj   1/1     Running   0          11s
+nginx-ff6774dc6-4mbh7     1/1     Running   0          34m
+nginx-ff6774dc6-96w6c     1/1     Running   0          17m
+nginx-ff6774dc6-qn5n7     1/1     Running   0          34m
+nginx-ff6774dc6-v5dfw     1/1     Running   0          17m
+nginx-ff6774dc6-xklfv     1/1     Running   0          34m
+
+apache-clusterip.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: apache
+  ports:
+    - targetPort: 80
+      port: 80
+
+$ kubectl create -f apache-clusterip.yaml
+service/apache-clusterip created
+$ kubectl get svc
+NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+apache-clusterip   ClusterIP   10.109.45.161   <none>        80/TCP    7s
+kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP   33m
+nginx-clusterip    ClusterIP   10.109.89.76    <none>        80/TCP    14s
+~$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/cloud/deploy.yaml
+namespace/ingress-nginx created
+serviceaccount/ingress-nginx created
+serviceaccount/ingress-nginx-admission created
+role.rbac.authorization.k8s.io/ingress-nginx created
+role.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+configmap/ingress-nginx-controller created
+service/ingress-nginx-controller created
+service/ingress-nginx-controller-admission created
+deployment.apps/ingress-nginx-controller created
+job.batch/ingress-nginx-admission-create created
+job.batch/ingress-nginx-admission-patch created
+ingressclass.networking.k8s.io/nginx created
+validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+
+web-ingress.yaml
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /apache
+        pathType: Prefix
+        backend:
+          service:
+            name: apache-clusterip
+            port:
+              number: 80
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-clusterip
+            port:
+              number: 80
+
+$ kubectl create -f web-ingress.yaml
+ingress.networking.k8s.io/web created
+$ kubectl get ingress
+NAME   CLASS    HOSTS   ADDRESS   PORTS   AGE
+web    <none>   *                 80      13s
+$ wget localhost:32361/apache
+$ wget localhost:32361/nginx

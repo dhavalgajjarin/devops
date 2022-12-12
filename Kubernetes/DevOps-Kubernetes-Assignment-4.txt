@@ -1,0 +1,19 @@
+nginx-clusterip.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+  ports:
+    - targetPort: 80
+      port: 80
+
+$ kubectl create -f nginx-clusterip.yaml
+service/nginx-clusterip created
+$ kubectl get svc nginx-clusterip
+NAME              TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx-clusterip   ClusterIP  10.103.3.69    <none>        80/TCP         6s

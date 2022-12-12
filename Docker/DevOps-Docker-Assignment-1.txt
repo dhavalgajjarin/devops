@@ -1,0 +1,7 @@
+$ docker pull ubuntu
+$ docker run -p 80:80 -dit ubuntu
+$ docker exec -it 3bb2 /bin/bash
+    apt-get update
+    apt-get install apache2
+    /etc/init.d/apache2 start
+$ wget http://localhost

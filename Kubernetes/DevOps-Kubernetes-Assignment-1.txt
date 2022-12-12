@@ -1,0 +1,48 @@
+Master
+$ sudo kubeadm init
+
+Node 2
+$ sudo kubeadm join 10.0.0.6:6443 --token hdz7a8.lzdto1n2sd9i83xu --discovery-token-ca-cert-hash sha256:ae4d731910075ee60e78e9876e7b330044ef99f614c84c4cb6012be85efdadd4
+
+Node 3
+$ sudo kubeadm join 10.0.0.6:6443 --token hdz7a8.lzdto1n2sd9i83xu --discovery-token-ca-cert-hash sha256:ae4d731910075ee60e78e9876e7b330044ef99f614c84c4cb6012be85efdadd4
+
+Master
+$ kubectl get nodes
+NAME         STATUS   ROLES           AGE     VERSION
+jenkins      Ready    <none>          6h52m   v1.25.4
+kubernetes   Ready    control-plane   6h55m   v1.25.4
+swarm        Ready    <none>          60m     v1.25.4
+
+nginx.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+$ kubectl create -f nginx.yaml
+deployment.apps/nginx created
+
+$ kubectl get pods
+NAME                    READY   STATUS    RESTARTS   AGE
+nginx-76d6c9b8c-df2cp   1/1     Running   0          2m40s
+nginx-76d6c9b8c-fnmsk   1/1     Running   0          2m40s
+nginx-76d6c9b8c-mq2mh   1/1     Running   0          2m40s

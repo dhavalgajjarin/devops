@@ -1,0 +1,10 @@
+$ docker login -u dhavalgajjarin
+$ docker tag 7879 dhavalgajjarin/ubuntu_apache2
+$ docker push dhavalgajjarin/ubuntu_apache2
+
+
+$ docker pull dhavalgajjarin/ubuntu_apache2
+$ docker run -p 80:80 -dit dhavalgajjarin/ubuntu_apache2
+$ docker exec -it 111c /bin/bash
+    /etc/init.d/apache2 start
+$ wget http://localhost

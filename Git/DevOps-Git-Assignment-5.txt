@@ -1,0 +1,23 @@
+$ cd GitAssignment5/
+$ git init
+$ touch master.txt
+$ git add master.txt
+$ git commit -m "Master commit"
+$ git branch future
+$ git checkout future
+$ git branch feature/2fa
+$ git checkout feature/2fa
+$ touch 2fa.txt
+$ git add 2fa.txt
+$ git commit -m "2FA commit"
+$ git checkout future
+$ git merge feature/2fa
+$ git checkout master
+$ git merge future
+$ git branch hotfix/login
+$ git checkout hotfix/login
+$ touch urgent.txt
+$ git add urgent.txt
+$ git commit -m "Hotfix commit"
+$ git checkout master
+$ git merge hotfix/login

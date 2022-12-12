@@ -1,0 +1,29 @@
+$ cd GitAssignment4/
+$ git init
+$ touch master.txt
+$ git add master.txt
+$ git commit -m "Master commit"
+$ git branch public1
+$ git branch public2
+$ git branch private
+$ git checkout  public1
+$ touch public1.txt
+$ git add public1.txt
+$ git commit -m "Public1 commit"
+$ git checkout master
+$ git merge public1
+$ git merge public2
+$ git checkout private
+$ vi master.txt
+$ git add master.txt
+$ git commit -m "Private commit"
+$ git checkout public1
+$ git merge private
+$ git checkout public2
+$ git merge private
+$ git checkout master
+$ git merge private
+$ git checkout private
+$ git merge master
+$ git merge public1
+$ git merge public2

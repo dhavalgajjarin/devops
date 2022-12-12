@@ -1,0 +1,60 @@
+$ ansible-galaxy init roles/ansible-new
+- Role roles/ansible-new was created successfully
+
+tasks/test.yml
+---
+- name: Installing java
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+tasks/prod.yml
+---
+- name: Installing mysql
+  apt:
+    name: mysql-server
+    state: present
+
+tasks/main.yml
+---
+- name: Installing java on test
+  import_tasks: test.yml
+  when: inventory_hostname in groups['test']
+- name: Installing mysql on prod
+  import_tasks: prod.yml
+  when: inventory_hostname in groups['prod']
+
+assignment5.yml
+---
+- hosts: all
+  remote_user: root
+  roles:
+    - ansible-new
+
+$ ansible-playbook assignment5.yml
+
+PLAY [all] ***********************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [10.0.0.6]
+ok: [10.0.0.7]
+ok: [10.0.0.8]
+ok: [10.0.0.9]
+
+TASK [ansible-new : Installing java] ******************************************************************************
+skipping: [10.0.0.6]
+skipping: [10.0.0.7]
+changed: [10.0.0.8]
+changed: [10.0.0.9]
+
+TASK [ansible-new : Installing mysql] ********************************************************************************
+skipping: [10.0.0.8]
+skipping: [10.0.0.9]
+changed: [10.0.0.6]
+changed: [10.0.0.7]
+
+PLAY RECAP ***********************************************************************************************************
+10.0.0.6                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+10.0.0.7                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+10.0.0.8                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+10.0.0.9                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0

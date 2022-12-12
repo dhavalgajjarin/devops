@@ -1,0 +1,18 @@
+$ cd GitAssignment2/
+$ git init
+$ touch feature1.txt feature2.txt
+$ git add feature*
+$ git commit -m "Assignment 2 Step 1"
+$ git checkout -b feature1
+$ git checkout -b feature2
+$ git checkout -b develop
+$ touch develop.txt
+$ git stash
+$ git checkout feature1
+$ touch new.txt
+$ git add new.txt
+$ git commit -m "Assignment 2 Step 2"
+$ git checkout develop
+$ git stash apply
+$ git add develop.txt
+$ git commit -m "Assignment 2 Step 3"

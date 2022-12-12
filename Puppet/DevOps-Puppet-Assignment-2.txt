@@ -1,0 +1,18 @@
+site.pp
+node default {
+  exec{ 'Conditions' :
+    command => 'apt-get install nginx -y',
+    path => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin',
+    unless => '/bin/which apache2',
+  }
+}
+
+Slave4
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave4.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669125268'
+Notice: /Stage[main]/Main/Node[default]/Exec[Conditions]/returns: executed successfully (corrective)
+Notice: Applied catalog in 8.57 seconds

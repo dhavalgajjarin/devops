@@ -1,0 +1,52 @@
+$ ansible-galaxy init roles/ansible-new
+- Role roles/ansible-new was created successfully
+
+tasks/slave1.yml
+---
+- name: Installing apache2
+  apt:
+    name: apache2
+    state: present
+
+tasks/slave2.yml
+---
+- name: Installing nginx
+  apt:
+    name: nginx
+    state: present
+
+tasks/main.yml
+---
+- name: Installing apache2 on slave1
+  import_tasks: slave1.yml
+  when: inventory_hostname in groups['slave1']
+- name: Installing nginx on slave2
+  import_tasks: slave2.yml
+  when: inventory_hostname in groups['slave2']
+
+assignment3.yml
+---
+- hosts: all
+  remote_user: root
+  roles:
+    - ansible-new
+
+$ ansible-playbook assignment3.yml
+
+PLAY [all] ***********************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [10.0.0.6]
+ok: [10.0.0.7]
+
+TASK [ansible-new : Installing apache2] ******************************************************************************
+skipping: [10.0.0.6]
+changed: [10.0.0.7]
+
+TASK [ansible-new : Installing nginx] ********************************************************************************
+skipping: [10.0.0.7]
+changed: [10.0.0.6]
+
+PLAY RECAP ***********************************************************************************************************
+10.0.0.6                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+10.0.0.7                   : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0

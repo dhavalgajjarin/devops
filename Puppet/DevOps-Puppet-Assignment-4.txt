@@ -1,0 +1,31 @@
+Master
+$ pdk new module assignment4
+$ cd assignment4
+$ pdk new class assignment4
+
+manifests/init.pp
+class assignment4 {
+  exec{ 'NginxJavaMySQL' :
+    command => 'apt-get install openjdk-8-jdk mysql-server -y',
+    path => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin',
+    onlyif => '/bin/which nginx',
+  }
+}
+
+$ pdk build --target-dir=build
+$ puppet module install build/azureuser-assignment4-0.1.0.tar.gz
+
+site.pp
+node default {
+  include assignment4
+}
+
+Slave4
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave4.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669137317'
+Notice: /Stage[main]/Assignment4/Exec[NginxJavaMySQL]/returns: executed successfully
+Notice: Applied catalog in 67.48 seconds

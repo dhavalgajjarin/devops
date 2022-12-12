@@ -1,0 +1,39 @@
+assignment1.yml
+---
+- hosts: slave1
+  remote_user: root
+  tasks:
+    - name: Installing java
+      apt:
+        name: openjdk-11-jdk
+        state: present
+- hosts: slave2
+  remote_user: root
+  tasks:
+    - name: Installing mysql
+      apt:
+        name: mysql-server
+        state: present
+
+
+$ ansible-playbook assignment1.yml
+
+PLAY [slave1] ********************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [10.0.0.7]
+
+TASK [Installing java] ***********************************************************************************************
+changed: [10.0.0.7]
+
+PLAY [slave2] ********************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [10.0.0.6]
+
+TASK [Installing mysql] **********************************************************************************************
+changed: [10.0.0.6]
+
+PLAY RECAP ***********************************************************************************************************
+10.0.0.6                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+10.0.0.7                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

@@ -1,0 +1,26 @@
+$ cd GitAssignment3/
+$ git init
+$ touch main.txt
+$ git add main.txt
+$ git commit -m "Main commit"
+$ git branch develop
+$ git checkout develop
+$ touch develop.txt
+$ git add develop.txt
+$ git commit -m "Develop commit"
+$ git branch f1
+$ git checkout f1
+$ touch f1.txt
+$ git add f1.txt
+$ git commit -m "F1 commit"
+$ git branch f2
+$ git checkout f2
+$ touch f2.txt
+$ git add f2.txt
+$ git commit -m "F2 commit"
+$ git remote add origin git@github.com:dhavalgajjarin/devops.git
+$ git push --all origin
+$ git branch -D f2
+$ git checkout master
+$ git branch -D f2
+$ git push origin --delete f2

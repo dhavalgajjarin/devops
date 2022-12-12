@@ -1,0 +1,28 @@
+assignment2.sh
+#!/bin/bash
+echo "This text has been added by custom script" > /tmp.1.txt
+
+assignment2.yml
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: Executing script
+      script:
+        cmd: /assignment2.sh
+
+$ ansible-playbook assignment2.yml
+
+PLAY [all] ***********************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************
+ok: [10.0.0.6]
+ok: [10.0.0.7]
+
+TASK [Executing script] **********************************************************************************************
+changed: [10.0.0.7]
+changed: [10.0.0.6]
+
+PLAY RECAP ***********************************************************************************************************
+10.0.0.6                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+10.0.0.7                   : ok=2    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

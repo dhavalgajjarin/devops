@@ -1,0 +1,7 @@
+$ docker volume create web
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     web
+$ docker run -p 80:80 -dit -v web:/var/www/html test:v2
+6db94a8ffacda4f663ea6e8feb338cc1457b7b90c3050b425d7a0844ada526fb
+$ docker inspect 6db9

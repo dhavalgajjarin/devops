@@ -1,0 +1,31 @@
+Master
+$ docker swarm init
+Swarm initialized: current node (y8dj8vcseqcvolejf0nuym4hw) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-4xbu58bkvmvg7iilk2r4fkvh2bj2nq63p9xvcqv82dvgb3xkix-8zrfa3ob41riburf5olymaqde 10.0.0.7:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+Node2
+$ docker swarm join --token SWMTKN-1-4xbu58bkvmvg7iilk2r4fkvh2bj2nq63p9xvcqv82dvgb3xkix-8zrfa3ob41riburf5olymaqde 10.0.0.7:2377
+This node joined a swarm as a worker.
+
+Node3
+$ docker swarm join --token SWMTKN-1-4xbu58bkvmvg7iilk2r4fkvh2bj2nq63p9xvcqv82dvgb3xkix-8zrfa3ob41riburf5olymaqde 10.0.0.7:2377
+This node joined a swarm as a worker.
+
+Master
+$ docker service create --replicas 4 --publish published=9090,target=80 httpd
+q7mdxk0otf9vmry0ln0i12olh
+overall progress: 4 out of 4 tasks
+1/4: running
+2/4: running
+3/4: running
+4/4: running
+verify: Service converged
+
+$ docker service ls
+ID             NAME                MODE         REPLICAS   IMAGE          PORTS
+q7mdxk0otf9v   romantic_mccarthy   replicated   4/4        httpd:latest   *:9090->80/tcp

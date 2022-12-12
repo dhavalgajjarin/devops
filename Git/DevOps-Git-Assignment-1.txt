@@ -1,0 +1,9 @@
+$ cd GitAssignment/
+$ touch Code.txt Log.txt Output.txt
+$ ls
+$ git init
+$ git status
+$ git add Code.txt Output.txt 
+$ git commit -m "Assignment 1"
+$ git remote add origin https://github.com/dhavalgajjarin/git.git
+$ git push -u origin master

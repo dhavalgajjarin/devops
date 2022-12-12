@@ -1,0 +1,33 @@
+site.pp
+node default {
+  exec{ 'Apache2' :
+    command => 'echo "apache is installed" > /var/www/html/index.html',
+    path => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin',
+    onlyif => '/bin/which apache2',
+  }
+  exec{ 'Nginx' :
+    command => 'echo "nginx is installed" > /var/www/html/index.html',
+    path => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin',
+    onlyif => '/bin/which nginx',
+  }
+}
+
+Slave1
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave1.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669125800'
+Notice: /Stage[main]/Main/Node[default]/Exec[Apache2]/returns: executed successfully
+Notice: Applied catalog in 0.04 seconds
+
+Slave4
+$ puppet agent --test
+Info: Using environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for slave4.odybelq2bkpulbyx00kz5dttub.fx.internal.cloudapp.net
+Info: Applying configuration version '1669125809'
+Notice: /Stage[main]/Main/Node[default]/Exec[Nginx]/returns: executed successfully
+Notice: Applied catalog in 0.04 seconds

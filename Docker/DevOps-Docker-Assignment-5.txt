@@ -1,0 +1,41 @@
+Dockerfile
+FROM ubuntu
+RUN apt-get update
+RUN apt-get install apache2 -y
+COPY index.html /var/www/html/index.html
+EXPOSE 80
+CMD apachectl -D FOREGROUND
+
+
+CMD
+$ docker build -t test:v2 .
+Sending build context to Docker daemon  266.2kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Using cache
+ ---> 3e009fe79387
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Using cache
+ ---> 9fb43891b12f
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> 3590e67a7d98
+Step 5/6 : EXPOSE 80
+ ---> Running in c688193ec60e
+Removing intermediate container c688193ec60e
+ ---> ae10905a6a3a
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in 1985cf8d921a
+Removing intermediate container 1985cf8d921a
+ ---> 169821de18ef
+Successfully built 169821de18ef
+Successfully tagged test:v2
+$ docker images
+REPOSITORY                      TAG       IMAGE ID       CREATED         SIZE
+test                            v2        169821de18ef   6 seconds ago   225MB
+test                            v1        8ecb2650c238   8 minutes ago   225MB
+ubuntu                          latest    a8780b506fa4   2 weeks ago     77.8MB
+$ docker run -p 80:80 -dit test:v2
+20a6d18c4bc7e01421e35ed962eeb1da8b2483ac35e3050838f6e59a5c039dc1
+$ wget http://localhost
+$ cat index.html

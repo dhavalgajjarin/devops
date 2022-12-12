@@ -1,0 +1,153 @@
+Dockerfile
+FROM ubuntu
+RUN apt-get update
+RUN apt-get install apache2 -y
+COPY index.html /var/www/html/index.html
+EXPOSE 80
+CMD apachectl -D FOREGROUND
+
+CMD
+$ echo "Container 1" > index.html
+$ docker build -t test1 .
+Sending build context to Docker daemon  267.3kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Running in f7091fe8e01e
+Removing intermediate container f7091fe8e01e
+ ---> 0d77363eb888
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Running in af95f37c601c
+Removing intermediate container af95f37c601c
+ ---> e203a6203191
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> a0942ba80e00
+Step 5/6 : EXPOSE 80
+ ---> Running in 49040aa7740a
+Removing intermediate container 49040aa7740a
+ ---> ff0e166bd456
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in f9c74f16ec63
+Removing intermediate container f9c74f16ec63
+ ---> 641ba6e2051b
+Successfully built 641ba6e2051b
+Successfully tagged test1:latest
+$ echo "Container 2" > index.html
+$ docker build -t test2 .
+Sending build context to Docker daemon  267.3kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Using cache
+ ---> 0d77363eb888
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Using cache
+ ---> e203a6203191
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> 79516aed0ed0
+Step 5/6 : EXPOSE 80
+ ---> Running in 9fca8fa00ac5
+Removing intermediate container 9fca8fa00ac5
+ ---> 0d38bafe0c05
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in a4d1f87cb845
+Removing intermediate container a4d1f87cb845
+ ---> 7abd1a4f7c34
+Successfully built 7abd1a4f7c34
+Successfully tagged test2:latest
+$ echo "Container 3" > index.html
+$ docker build -t test3 .
+Sending build context to Docker daemon  267.3kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Using cache
+ ---> 0d77363eb888
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Using cache
+ ---> e203a6203191
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> 857702e851e4
+Step 5/6 : EXPOSE 80
+ ---> Running in 8b8d09c7bf1b
+Removing intermediate container 8b8d09c7bf1b
+ ---> 5b9d1c9e5718
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in ebcac9bc88e9
+Removing intermediate container ebcac9bc88e9
+ ---> 6dd5f85ba355
+Successfully built 6dd5f85ba355
+Successfully tagged test3:latest
+$ echo "Container 4" > index.html
+$ docker build -t test4 .
+Sending build context to Docker daemon  267.3kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Using cache
+ ---> 0d77363eb888
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Using cache
+ ---> e203a6203191
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> e3b50b8b2562
+Step 5/6 : EXPOSE 80
+ ---> Running in 28330ddb3433
+Removing intermediate container 28330ddb3433
+ ---> 09ca1eb47c10
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in 7a408211b55a
+Removing intermediate container 7a408211b55a
+ ---> c032ce676413
+Successfully built c032ce676413
+Successfully tagged test4:latest
+$ echo "Container 5" > index.html
+$ docker build -t test5 .
+Sending build context to Docker daemon  267.3kB
+Step 1/6 : FROM ubuntu
+ ---> a8780b506fa4
+Step 2/6 : RUN apt-get update
+ ---> Using cache
+ ---> 0d77363eb888
+Step 3/6 : RUN apt-get install apache2 -y
+ ---> Using cache
+ ---> e203a6203191
+Step 4/6 : COPY index.html /var/www/html/index.html
+ ---> 2e2865fabcf0
+Step 5/6 : EXPOSE 80
+ ---> Running in cadb4ec51e3a
+Removing intermediate container cadb4ec51e3a
+ ---> 81bbade18ac4
+Step 6/6 : CMD apachectl -D FOREGROUND
+ ---> Running in 9503527135eb
+Removing intermediate container 9503527135eb
+ ---> 17240491e6a2
+Successfully built 17240491e6a2
+Successfully tagged test5:latest
+
+docker-compose.yml
+version: "3.9"
+services:
+  web1:
+    image: "test1:latest"
+    ports:
+      - "81:80"
+  web2:
+    image: "test2:latest"
+    ports:
+      - "82:80"
+  web3:
+    image: "test3:latest"
+    ports:
+      - "83:80"
+  web4:
+    image: "test4:latest"
+    ports:
+      - "84:80"
+  web5:
+    image: "test5:latest"
+    ports:
+      - "85:80"
+
+$ docker compose up -d
+$ docker ps

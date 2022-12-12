@@ -1,0 +1,111 @@
+$ terraform destroy
+azurerm_linux_virtual_machine.terraform: Destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Compute/virtualMachines/assignment2]        
+azurerm_linux_virtual_machine.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Compute/virtualMachines/assignment1, 10s elapsed]                                            
+azurerm_linux_virtual_machine.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Compute/virtualMachines/assignment1, 20s elapsed]                                            
+azurerm_linux_virtual_machine.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Compute/virtualMachines/assignment1, 30s elapsed]                                            
+azurerm_linux_virtual_machine.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Compute/virtualMachines/assignment1, 40s elapsed]                                            
+azurerm_linux_virtual_machine.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Compute/virtualMachines/assignment1, 50s elapsed]                                            
+azurerm_linux_virtual_machine.terraform: Destruction complete after 52s                                                                                                                                    
+azurerm_network_interface.terraform: Destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/networkInterfaces/devops-nic]           
+azurerm_network_interface.terraform: Destruction complete after 7s                                                                                                                                         
+azurerm_subnet.terraform: Destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/virtualNetworks/devops-vnet/subnets/devops-subnet] 
+azurerm_subnet.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...orks/devops-vnet/subnets/devops-subnet, 10s elapsed]                                                           
+azurerm_subnet.terraform: Destruction complete after 12s                                                                                                                                                   
+azurerm_virtual_network.terraform: Destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/virtualNetworks/devops-vnet]              
+azurerm_virtual_network.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-...ft.Network/virtualNetworks/devops-vnet, 10s elapsed]                                                  
+azurerm_virtual_network.terraform: Destruction complete after 12s                                                                                                                                          
+azurerm_resource_group.terraform: Destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg]                                                                       
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 10s elapsed]                                                    
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 20s elapsed]                                                    
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 30s elapsed]                                                    
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 40s elapsed]                                                    
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 50s elapsed]                                                    
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 1m0s elapsed]                                                   
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 1m10s elapsed]                                                  
+azurerm_resource_group.terraform: Still destroying... [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg, 1m20s elapsed]                                                  
+azurerm_resource_group.terraform: Destruction complete after 1m22s                                                                                                                                         
+
+main.tf
+resource "azurerm_resource_group" "terraform" {
+  name     = "terraform-rg"
+  location = "West Europe"
+}
+
+resource "azurerm_virtual_network" "terraform" {
+  name                = "devops-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.terraform.location
+  resource_group_name = azurerm_resource_group.terraform.name
+}
+
+resource "azurerm_subnet" "terraform" {
+  name                 = "devops-subnet"
+  resource_group_name  = azurerm_resource_group.terraform.name
+  virtual_network_name = azurerm_virtual_network.terraform.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_network_interface" "terraform" {
+  name                = "devops-nic"
+  location            = azurerm_resource_group.terraform.location
+  resource_group_name = azurerm_resource_group.terraform.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.terraform.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "10.0.2.9"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "terraform" {
+  name                = "assignment2"
+  resource_group_name = azurerm_resource_group.terraform.name
+  location            = azurerm_resource_group.terraform.location
+  size                = "Standard_D2s_v3"
+  admin_username      = "azueruser"
+  network_interface_ids = [
+    azurerm_network_interface.terraform.id,
+  ]
+
+  admin_ssh_key {
+    username   = "azueruser"
+    public_key = file("~/.ssh/id_rsa.pub")
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts-gen2"
+    version   = "latest"
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+
+$ terraform init
+$ terraform plan
+$ terraform apply
+azurerm_resource_group.terraform: Creating...
+azurerm_resource_group.terraform: Creation complete after 4s [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg]
+azurerm_virtual_network.terraform: Creating...
+azurerm_virtual_network.terraform: Creation complete after 10s [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/virtualNetworks/devops-vnet]
+azurerm_subnet.terraform: Creating...
+azurerm_subnet.terraform: Creation complete after 8s [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/virtualNetworks/devops-vnet/subnets/devops-subnet]
+azurerm_network_interface.terraform: Creating...
+azurerm_network_interface.terraform: Creation complete after 5s [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Network/networkInterfaces/devops-nic]
+azurerm_linux_virtual_machine.terraform: Creating...
+azurerm_linux_virtual_machine.terraform: Still creating... [10s elapsed]
+azurerm_linux_virtual_machine.terraform: Still creating... [20s elapsed]
+azurerm_linux_virtual_machine.terraform: Still creating... [30s elapsed]
+azurerm_linux_virtual_machine.terraform: Still creating... [40s elapsed]
+azurerm_linux_virtual_machine.terraform: Still creating... [50s elapsed]
+azurerm_linux_virtual_machine.terraform: Creation complete after 54s [id=/subscriptions/fb7dc146-204e-4507-84f0-58e9af15a960/resourceGroups/terraform-rg/providers/Microsoft.Compute/virtualMachines/assignment2]

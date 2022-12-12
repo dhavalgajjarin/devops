@@ -1,0 +1,6 @@
+$ docker commit 3bb2
+$ docker tag 7879 ubuntu_apache2
+$ docker run -p 81:80 -dit ubuntu_apache2
+$ docker exec -it e387 /bin/bash
+    /etc/init.d/apache2 start
+$ wget http://localhost:81
