@@ -1,0 +1,35 @@
+properties([pipelineTriggers([githubPush()])])
+
+pipeline {
+    agent {
+        label 'kubernetes'
+    }
+    
+    environment {
+        DOCKERHUB_CREDENTIALS=credentials('Docker')
+        REPOSITORY_TAG="dhavalgajjarin/devops:v${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t ${REPOSITORY_TAG} .'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                sh 'docker push ${REPOSITORY_TAG}'
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'envsubst < ${WORKSPACE}/deploy.yaml | kubectl apply -f -'
+            }
+        }
+    }
+}

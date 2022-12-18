@@ -1,0 +1,27 @@
+---
+- name: Jenkins server
+  hosts: jenkins
+  remote_user: root
+  tasks:
+    - name: Install JDK 11
+      apt:
+        name: openjdk-11-jdk
+        update_cache: true
+    - name: Get Jenkins Keyrings
+      get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+    - name: Configure Jenkins Repository
+      apt_repository:
+        repo: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+        state: present
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        update_cache: true
+    - name: Start Jenkins
+      systemd:
+        name: jenkins
+        enabled: true
+        masked: no
+        daemon_reload: yes

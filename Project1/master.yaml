@@ -1,0 +1,52 @@
+---
+- name: Master server
+  hosts: local
+  remote_user: root
+  tasks:
+    - name: Install JDK 11
+      apt:
+        name: openjdk-11-jdk
+        update_cache: true
+    - name: Get Jenkins Keyrings
+      get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+    - name: Configure Jenkins Repository
+      apt_repository:
+        repo: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/
+        state: present
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        update_cache: true
+    - name: Start Jenkins
+      systemd:
+        name: jenkins
+        enabled: true
+        masked: no
+        daemon_reload: yes
+    - name: Install prequisites for Docker
+      apt:
+        pkg:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+    - name: Get Docker GPG Keyrings
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
+    - name: Setup Docker Repository
+      shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - name: Install Docker
+      apt:
+        pkg:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        update_cache: true
+    - name: Start Docker
+      systemd:
+        name: docker
+        enabled: true
+        masked: no
+        daemon_reload: yes
